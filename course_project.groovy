@@ -16,7 +16,7 @@ pipeline {
             steps {
                 sh 'docker stop $(docker ps -a -q)'  //остановить все кнотейнеры
                 sh 'docker rm $(docker ps -a -q)' //удвлить все контейнеры
-                sh 'docker run --name course_project_container -id course_proj' // создать контейнер из имєджа
+                sh 'docker run -v /tmp/reports/allure-results:/tmp/reports/allure-results --name course_project_container -id course_proj' // создать контейнер из имєджа
             }
         }
         stage('Setup utils'){
@@ -38,11 +38,11 @@ pipeline {
                 sh 'docker exec course_project_container sh -c \"git clone https://github.com/IshchukI/PlayWrite.git\"'
                 sh 'docker exec course_project_container sh -c \"python3 -m venv PlayWrite/playwrite_venv\"'
                 sh 'docker exec course_project_container sh -c \". PlayWrite/playwrite_venv/bin/activate\"'
-//                sh 'docker exec course_project_container sh -c \"cd PlayWrite/ && pip3 install -e . && pip3 install -e src/ && python3 -m playwright install\"'
-                sh 'docker exec course_project_container sh -c \"cd PlayWrite/ && pip3 install -e . && pip3 install -e src/\"'
+                sh 'docker exec course_project_container sh -c \"cd PlayWrite/ && pip3 install -e . && pip3 install -e src/ && python3 -m playwright install\"'
+                sh 'docker exec course_project_container sh -c \"python3 -m pytest PlayWrite/dummy_test.py -p no:cacheprovider --alluredir=/tmp/reports/allure-results\"'
+                sh 'docker exec course_project_container sh -c \"playwright install-deps\"'
+                sh 'docker exec course_project_container sh -c \"apt-get install -y libnss3 libnspr4 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libxkbcommon0 libxcomposite1 libxdamage1 libxfixes3 libxrandr2 libgbm1 libpango-1.0-0 libcairo2 libasound2 libatspi2.0-0 libwayland-client0\"'
                 sh 'docker exec course_project_container sh -c \"python3 -m pytest PlayWrite/test\"'
-                sh 'docker exec course_project_container sh -c \"apt-add-repository ppa:qameta/allure\"'
-                sh 'docker exec course_project_container sh -c \"apt-get install -y allure\"'
             }
         }
     }
