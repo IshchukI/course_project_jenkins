@@ -1,10 +1,14 @@
+#_______________________Local_______________________________
+
 echo $USER
 docker pull ubuntu:18.04
 git clone https://github.com/IshchukI/course_project.git
 docker build --no-cache -f course_project/Dockerfile . -t course_proj
-docker stop $(docker ps -a -q)
-docker rm $(docker ps -a -q)
-docker run -v /tmp/reports/allure-results:/tmp/reports/allure-results --name course_project_container -id course_proj
+#docker stop $(docker ps -a -q)
+#docker rm $(docker ps -a -q)
+docker stop course_project_container
+docker rm course_project_container
+docker run -v /var/lib/jenkins/workspace/course_project_1/allure-results:/tmp/reports/allure-results --name course_project_container -id course_proj
 docker exec course_project_container sh -c "apt-get update"
 docker exec course_project_container sh -c "apt-get install -y python3.8"
 docker exec course_project_container sh -c "apt-get install -y python3-pip"
@@ -16,9 +20,41 @@ docker exec course_project_container sh -c "update-alternatives --install /usr/b
 docker exec course_project_container sh -c "git clone https://github.com/IshchukI/PlayWrite.git"
 docker exec course_project_container sh -c "python3 -m venv PlayWrite/playwrite_venv"
 docker exec course_project_container sh -c ". PlayWrite/playwrite_venv/bin/activate"
-docker exec course_project_container sh -c "cd PlayWrite/ && pip3 install -e . && pip3 install -e src/"
-#docker exec course_project_container sh -c "cd PlayWrite/ && pip3 install -e . && pip3 install -e src/ && python3 -m playwright install"
+docker exec course_project_container sh -c "cd PlayWrite/ && pip3 install -e . && pip3 install -e src/ && python3 -m playwright install"
 docker exec course_project_container sh -c "python3 -m pytest PlayWrite/dummy_test.py -p no:cacheprovider --alluredir=/tmp/reports/allure-results"
+docker exec course_project_container sh -c "playwright install-deps"
+docker exec course_project_container sh -c "apt-get install -y libnss3 libnspr4 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libxkbcommon0 libxcomposite1 libxdamage1 libxfixes3 libxrandr2 libgbm1 libpango-1.0-0 libcairo2 libasound2 libatspi2.0-0 libwayland-client0"
+docker exec course_project_container sh -c "python3 -m pytest PlayWrite/test -p no:cacheprovider --alluredir=/tmp/reports/allure-results"
+
+
+#_______________________Hillel_______________________________
+echo $USER
+docker pull ubuntu:18.04
+git clone https://github.com/IshchukI/course_project.git
+docker build --no-cache -f course_project/Dockerfile . -t course_proj
+#docker stop $(docker ps -a -q)
+#docker rm $(docker ps -a -q)
+pwd
+docker stop course_project_container
+docker rm course_project_container
+docker run -v /var/lib/jenkins/workspace/CourseProjectPipelines/course_project/allure-results:/tmp/reports/allure-results --name course_project_container -id course_proj
+docker exec course_project_container sh -c "apt-get update"
+docker exec course_project_container sh -c "apt-get install -y python3.8"
+docker exec course_project_container sh -c "apt-get install -y python3-pip"
+docker exec course_project_container sh -c "apt-get install -y git"
+docker exec course_project_container sh -c "apt-get install -y python3.8-venv"
+docker exec course_project_container sh -c "pip3 install pytest"
+docker exec course_project_container sh -c "update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.6 1"
+docker exec course_project_container sh -c "update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.8 2"
+docker exec course_project_container sh -c "git clone https://github.com/IshchukI/PlayWrite.git"
+docker exec course_project_container sh -c "python3 -m venv PlayWrite/playwrite_venv"
+docker exec course_project_container sh -c ". PlayWrite/playwrite_venv/bin/activate"
+#docker exec course_project_container sh -c "cd PlayWrite/ && pip3 install -e . && pip3 install -e src/ && python3 -m playwright install"
+docker exec course_project_container sh -c "cd PlayWrite/ && pip3 install -e . && pip3 install -e src/ "
+docker exec course_project_container sh -c "python3 -m pytest PlayWrite/dummy_test.py -p no:cacheprovider --alluredir=/tmp/reports/allure-results"
+pwd
+ls -la
+ls -la allure-results/
 #docker exec course_project_container sh -c "playwright install-deps"
 #docker exec course_project_container sh -c "apt-get install -y libnss3 libnspr4 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libxkbcommon0 libxcomposite1 libxdamage1 libxfixes3 libxrandr2 libgbm1 libpango-1.0-0 libcairo2 libasound2 libatspi2.0-0 libwayland-client0"
-#docker exec course_project_container sh -c "python3 -m pytest PlayWrite/test"
+#docker exec course_project_container sh -c "python3 -m pytest PlayWrite/test -p no:cacheprovider --alluredir=/tmp/reports/allure-results"
